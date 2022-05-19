@@ -52,9 +52,19 @@
                         
                     </div>
                     <div>
-                        <v-btn color="#2c2c54" style="color: white; padding: 24px 0" block>
-                            <font-awesome-icon class="mr-2" icon="fa-regular fa-heart" /> Adicionar aos favoritos
-                        </v-btn>
+                        <div v-if="isTokenValid">
+                            <v-btn v-if="isFavorite" @click="removeFavorite()" color="#ed143d" style="color: white; padding: 24px 0" block>
+                                <font-awesome-icon class="mr-2" icon="fa-solid fa-heart" /> Remover dos favoritos
+                            </v-btn>
+                            <v-btn v-else color="#ed143d" @click="addFavorite()" outlined style="padding: 24px 0" block>
+                                <font-awesome-icon class="mr-2" icon="fa-regular fa-heart" /> Adicionar aos favoritos
+                            </v-btn>
+                        </div>
+                        <router-link v-else to="/login">
+                            <v-btn color="#ed143d" outlined style="padding: 24px 0" block>
+                                <font-awesome-icon class="mr-2" icon="fa-regular fa-heart" /> Adicionar aos favoritos
+                            </v-btn>
+                        </router-link>
                     </div>
                         
                 </div>
@@ -68,13 +78,17 @@
 
 import NavbarComponent from '../components/NavbarComponent.vue'
 import axios from 'axios'
+import verifyToken from '../auth/verifyToken'
 
 export default{
     name: 'ProductView',
 
     data() {
         return{
-            product: {}
+            product: {},
+            token: localStorage.getItem('token'),
+            isTokenValid: false,
+            isFavorite: false
         }
     },
     components: {
@@ -100,10 +114,97 @@ export default{
                 console.log(err);
                 this.$router.push({name: 'home'});
             }
+        },
+        async verifyToken(){
+            if(this.token){
+                var req = {
+                    headers: {
+                        Authorization: `Bearer ${this.token}`
+                    }
+                }
+                const result = await axios.post('http://localhost:3000/users/session-validate',{}, req);
+
+                if(result.data.email){
+                    this.isTokenValid = true;
+                    const res = await axios.get(`http://localhost:3000/users/${result.data.id}`, req);
+                    const favorites = res.data.favorites;
+
+                    const favoriteProduct = favorites.filter(favorite => favorite.id == this.product.id);
+
+                   if(favoriteProduct.length > 0){
+                       this.isFavorite = true;
+                   }
+                   else{
+                       this.isFavorite = false;
+                   }
+                }
+                else{
+                    this.isTokenValid = false;
+                }
+            }
+            else{
+                this.isTokenValid = false;
+            }
+        },
+        async addFavorite(){
+            try{
+
+                var req = {
+                    headers: {
+                        Authorization: `Bearer ${this.token}`
+                    }
+                }
+                
+                const result = await axios.post('http://localhost:3000/users/session-validate',{}, req);
+
+                const user = await axios.get(`http://localhost:3000/users/${result.data.id}`, req);
+                const favorites = user.data.favorites;
+                favorites.push({id: this.product.id});
+
+                const data = {
+                    favorites: favorites
+                }
+                const dataJson = JSON.parse(JSON.stringify(data));
+
+                await axios.put(`http://localhost:3000/users/${user.data.id}/products/favorites`, dataJson, req);
+                this.isFavorite = true;
+            }catch(err){
+                console.log(err);
+            }
+        },
+        async removeFavorite(){
+
+            const verify = await verifyToken();
+
+            if(verify){
+                var req = {
+                    headers: {
+                        Authorization: `Bearer ${this.token}`
+                    }
+                }
+
+                const user = await axios.get(`http://localhost:3000/users/${verify.data.id}`, req);
+                var favorites = user.data.favorites;
+                favorites = favorites.filter(favorite => favorite.id != this.product.id);
+
+                const data = {
+                    favorites: favorites
+                }
+                const dataJson = JSON.parse(JSON.stringify(data));
+
+                await axios.put(`http://localhost:3000/users/${user.data.id}/products/favorites`, dataJson, req);
+                this.isFavorite = false;
+            }
+            else{
+                this.isTokenValid = false;
+            }
+                
+            
         }
     },
     created: async function(){
         await this.loadProduct();
+        await this.verifyToken();
     }
 
 }

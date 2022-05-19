@@ -14,6 +14,7 @@
 <script>
   import CardComponent from '../components/CardComponent.vue';
   import NavbarComponent from '../components/NavbarComponent.vue';
+  import verifyToken from '../auth/verifyToken';
   import axios from 'axios';
 
   export default {
@@ -34,23 +35,13 @@
 
     methods: {
       async verifyToken(){
-            if(this.token){
-                    var req = {
-                    headers: {
-                        Authorization: `Bearer ${this.token}`
-                    }
-                }
-                const result = await axios.post('http://localhost:3000/users/session-validate',{}, req);
+            const result = await verifyToken();
 
-                if(result.data.email){
-                    this.isTokenValid = true;
-                }
-                else{
-                    this.isTokenValid = false;
-                }
+            if(result){
+              this.isTokenValid = true;
             }
             else{
-                this.isTokenValid = false;
+              this.isTokenValid = false;
             }
         } 
     },

@@ -38,34 +38,37 @@
             v-model="group"
             active-class="deep-purple--text text--accent-4"
             >
-            <router-link to="/">
+                <router-link to="/">
+                    <v-list-item class="px-5 py-4">
+                        <font-awesome-icon class="mr-3" icon="fa-solid fa-house" />
+                        <v-list-item-title>Inicio</v-list-item-title>
+                    </v-list-item>
+                </router-link>
+                <router-link to="/dashboard/products">
+                    <v-list-item class="px-5 py-4">
+                        <font-awesome-icon class="mr-3" icon="fa-solid fa-arrow-trend-up" />
+                        <v-list-item-title>Meus Produtos</v-list-item-title>
+                    </v-list-item>
+                </router-link>
+                
+                <router-link to="/dashboard/favorites">
+                    <v-list-item class="px-5 py-4">
+                        <font-awesome-icon class="mr-3" icon="fa-solid fa-heart" />
+                        <v-list-item-title>Favoritos</v-list-item-title>
+                    </v-list-item>
+                </router-link>
+
                 <v-list-item class="px-5 py-4">
-                    <font-awesome-icon class="mr-3" icon="fa-solid fa-house" />
-                    <v-list-item-title>Inicio</v-list-item-title>
+                    <font-awesome-icon class="mr-3" icon="fa-solid fa-gear" />
+                    <v-list-item-title>Configurações</v-list-item-title>
                 </v-list-item>
-            </router-link>
-            <router-link to="/dashboard/products">
-                <v-list-item class="px-5 py-4">
-                    <font-awesome-icon class="mr-3" icon="fa-solid fa-arrow-trend-up" />
-                    <v-list-item-title>Meus Produtos</v-list-item-title>
-                </v-list-item>
-            </router-link>
-            
 
-            <v-list-item class="px-5 py-4">
-                <font-awesome-icon class="mr-3" icon="fa-solid fa-cart-shopping" />
-                <v-list-item-title>Carrinho</v-list-item-title>
-            </v-list-item>
-
-            <v-list-item class="px-5 py-4">
-                <font-awesome-icon class="mr-3" icon="fa-solid fa-gear" />
-                <v-list-item-title>Configurações</v-list-item-title>
-            </v-list-item>
-
-            <v-list-item class="px-5 py-4">
-                <font-awesome-icon class="mr-3" icon="fa-solid fa-circle-info" />
-                <v-list-item-title>Meus Dados</v-list-item-title>
-            </v-list-item>
+                <router-link to="/dashboard/info">
+                    <v-list-item class="px-5 py-4">
+                        <font-awesome-icon class="mr-3" icon="fa-solid fa-circle-info" />
+                        <v-list-item-title>Meus Dados</v-list-item-title>
+                    </v-list-item>
+                </router-link>
             </v-list-item-group>
         </v-list>
         </v-navigation-drawer>

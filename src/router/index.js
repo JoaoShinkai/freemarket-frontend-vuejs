@@ -2,6 +2,8 @@ import axios from 'axios';
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import HomeView from '../views/HomeView.vue';
+import UserFavorites from '../views/Logged/UserFavorites';
+import UserInfo from '../views/Logged/UserInfo';
 import LoginView from '../views/LoginView.vue';
 import ProductView from '../views/ProductView';
 import RegisterView from '../views/RegisterView';
@@ -9,7 +11,26 @@ import UserProducts from '../views/UserProducts';
 
 Vue.use(VueRouter)
 
+async function validateSession(){
+  if(localStorage.getItem('token') != undefined){
 
+    var req = {
+      headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    }
+    
+    try{
+      await axios.post('http://localhost:3000/users/session-validate', {}, req);
+    }catch(err){
+      return false;
+    }
+    return true;
+  }
+  else{
+    return false;
+  }
+}
 
 const routes = [
   {
@@ -36,26 +57,25 @@ const routes = [
     path: '/dashboard/products',
     name: 'dashboard_products',
     component: UserProducts,
-    beforeEnter: async (to, from, next) => {
-      if(localStorage.getItem('token') != undefined){
+    beforeEnter: async(to, from, next) => {
+      await validateSession() ? next() : next('/login')
+    }
+  },
+  {
+    path: '/dashboard/info',
+    name: 'dashboard_info',
+    component: UserInfo,
+    beforeEnter: async(to, from, next) => {
+      await validateSession() ? next() : next('/login')
+    }
+  },
+  {
+    path: '/dashboard/favorites',
+    name: 'dashboard_favorites',
+    component: UserFavorites,
+    beforeEnter: async(to, from, next) => {
+      await validateSession() ? next() : next('/login')
 
-        var req = {
-          headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        }
-        
-        try{
-          await axios.post('http://localhost:3000/users/session-validate', {}, req);
-        }catch(err){
-          next('/login');
-        }
-        
-        next();
-      }
-      else{
-        next('/login')
-      }
     }
   }
 ]
