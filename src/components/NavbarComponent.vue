@@ -46,7 +46,7 @@
                 </router-link>
                 <router-link to="/dashboard/products">
                     <v-list-item class="px-5 py-4">
-                        <font-awesome-icon class="mr-3" icon="fa-solid fa-arrow-trend-up" />
+                        <font-awesome-icon class="mr-3" icon="fa-solid fa-bag-shopping" />
                         <v-list-item-title>Meus Produtos</v-list-item-title>
                     </v-list-item>
                 </router-link>

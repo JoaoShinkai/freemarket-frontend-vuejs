@@ -59,7 +59,6 @@
 <style>
   .container-products{
     padding: 20px 10%;
-    display: flex;
   }
   .container-products-group{
     display: flex;

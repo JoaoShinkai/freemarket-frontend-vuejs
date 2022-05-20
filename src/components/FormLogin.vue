@@ -40,7 +40,7 @@ export default {
       return {
         form: {
             email: '',
-            password: '12345678'
+            password: ''
         },
         showPass: false,
         rules: {
